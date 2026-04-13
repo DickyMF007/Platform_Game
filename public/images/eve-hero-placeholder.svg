@@ -1,0 +1,35 @@
+<svg width="1920" height="920" viewBox="0 0 1920 920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#061225" />
+      <stop offset="55%" stop-color="#102B4D" />
+      <stop offset="100%" stop-color="#1B4A6E" />
+    </linearGradient>
+    <radialGradient id="aurora" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1320 160) rotate(155) scale(700 280)">
+      <stop offset="0%" stop-color="#9DEBFF" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#9DEBFF" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="iceGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(420 660) rotate(-12) scale(700 260)">
+      <stop offset="0%" stop-color="#5FD8FF" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#5FD8FF" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1920" height="920" fill="url(#bg)" />
+  <rect width="1920" height="920" fill="url(#aurora)" />
+  <rect width="1920" height="920" fill="url(#iceGlow)" />
+
+  <path d="M0 742L214 676L380 708L520 662L668 694L840 640L1020 700L1208 646L1378 700L1586 640L1746 688L1920 650V920H0V742Z" fill="#0C1D37" />
+  <path d="M0 804L240 732L454 768L624 714L802 764L1006 704L1212 772L1438 704L1660 762L1920 708V920H0V804Z" fill="#143A61" fill-opacity="0.72" />
+
+  <g opacity="0.35" stroke="#C9F4FF" stroke-width="2">
+    <path d="M172 132L188 156L164 170L148 146L172 132Z" />
+    <path d="M392 84L414 116L380 138L358 106L392 84Z" />
+    <path d="M612 138L632 166L602 186L582 158L612 138Z" />
+    <path d="M1000 90L1020 118L988 140L968 112L1000 90Z" />
+    <path d="M1410 120L1432 152L1398 174L1376 142L1410 120Z" />
+  </g>
+
+  <text x="120" y="220" fill="#D7F8FF" font-size="82" font-family="Segoe UI, Arial, sans-serif" font-weight="700" letter-spacing="5">[EVE] EVERLASTING</text>
+  <text x="124" y="282" fill="#A8E9FF" font-size="32" font-family="Segoe UI, Arial, sans-serif" letter-spacing="8">STATE 3302 - WHITEOUT SURVIVAL</text>
+</svg>

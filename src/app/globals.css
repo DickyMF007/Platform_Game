@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --background: #091122;
+  --foreground: #e6f7ff;
+  --surface: #101d35;
+  --surface-soft: #152844;
+  --accent: #59d4ff;
+  --accent-2: #1f9bff;
+  --warn: #ffd166;
+  --danger: #ff6b6b;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-soft: var(--surface-soft);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), sans-serif;
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(89, 212, 255, 0.2), transparent 32%),
+    radial-gradient(circle at 80% 12%, rgba(31, 155, 255, 0.25), transparent 28%);
+}
+
+.ice-panel {
+  border: 1px solid rgba(122, 210, 255, 0.35);
+  background: linear-gradient(
+    145deg,
+    rgba(21, 40, 68, 0.82),
+    rgba(10, 23, 45, 0.9)
+  );
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.frost-text {
+  background: linear-gradient(90deg, #cbf4ff 10%, #7dd8ff 45%, #95edff 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.frost-button {
+  background: linear-gradient(120deg, var(--accent-2), var(--accent));
+  box-shadow: 0 8px 24px rgba(31, 155, 255, 0.35);
+}
+
+.frost-button:hover {
+  filter: brightness(1.1);
+}
