@@ -268,6 +268,12 @@ on public.alliance_events for all
 using (true)
 with check (true);
 
+drop policy if exists "Temporary frontend admin manage players" on public.players;
+create policy "Temporary frontend admin manage players"
+on public.players for all
+using (true)
+with check (true);
+
 drop policy if exists "Admin and recruiter manage players" on public.players;
 create policy "Admin and recruiter manage players"
 on public.players for all

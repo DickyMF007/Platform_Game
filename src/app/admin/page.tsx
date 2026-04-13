@@ -15,6 +15,7 @@ type AdminSummary = {
   stateTimelineCount: number;
   latestUpdateCount: number;
   quickStatsCount: number;
+  playerCount: number;
   registrationCount: number;
 };
 
@@ -29,6 +30,7 @@ export default function AdminPage() {
     stateTimelineCount: 0,
     latestUpdateCount: 0,
     quickStatsCount: 0,
+    playerCount: 0,
     registrationCount: 0,
   });
 
@@ -54,6 +56,7 @@ export default function AdminPage() {
         { count: stateTimelineCount },
         { count: latestUpdateCount },
         { count: quickStatsCount },
+        { count: playerCount },
         { count: registrationCount },
       ] =
         await Promise.all([
@@ -72,6 +75,9 @@ export default function AdminPage() {
             .from("quick_stats")
             .select("*", { count: "exact", head: true }),
           supabaseClient
+            .from("players")
+            .select("*", { count: "exact", head: true }),
+          supabaseClient
             .from("registrations")
             .select("*", { count: "exact", head: true }),
         ]);
@@ -82,6 +88,7 @@ export default function AdminPage() {
         stateTimelineCount: stateTimelineCount ?? 0,
         latestUpdateCount: latestUpdateCount ?? 0,
         quickStatsCount: quickStatsCount ?? 0,
+        playerCount: playerCount ?? 0,
         registrationCount: registrationCount ?? 0,
       });
     }, 0);
@@ -181,7 +188,7 @@ export default function AdminPage() {
         </button>
       </header>
 
-      <div className="grid gap-3 md:grid-cols-5">
+      <div className="grid gap-3 md:grid-cols-6">
         <Link
           href="/admin/alliance"
           className="ice-panel rounded-2xl p-4 transition hover:border-cyan-200/60"
@@ -217,6 +224,16 @@ export default function AdminPage() {
           <p className="text-xs text-slate-300">MASTER DATA</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">Quick Stats</p>
           <p className="mt-1 text-sm text-slate-300">Kelola statistik ringkas halaman Home.</p>
+        </Link>
+        <Link
+          href="/admin/players"
+          className="ice-panel rounded-2xl p-4 transition hover:border-cyan-200/60"
+        >
+          <p className="text-xs text-slate-300">MASTER DATA</p>
+          <p className="mt-2 text-lg font-semibold text-cyan-100">Player</p>
+          <p className="mt-1 text-sm text-slate-300">
+            Daftarkan player dan power dalam M/B.
+          </p>
         </Link>
         <Link
           href="/admin/registrations"
@@ -257,6 +274,10 @@ export default function AdminPage() {
             <tr className="border-t border-slate-700/60">
               <td className="px-3 py-2">Quick Stats</td>
               <td className="px-3 py-2">{summary.quickStatsCount}</td>
+            </tr>
+            <tr className="border-t border-slate-700/60">
+              <td className="px-3 py-2">Player</td>
+              <td className="px-3 py-2">{summary.playerCount}</td>
             </tr>
             <tr className="border-t border-slate-700/60">
               <td className="px-3 py-2">Registrations</td>

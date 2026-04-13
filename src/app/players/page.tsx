@@ -1,11 +1,48 @@
-const players = [
-  { name: "FrostKing", gameId: "WOS-00991", power: "1.2B", role: "R5" },
-  { name: "LunaWolf", gameId: "WOS-00117", power: "1.08B", role: "Recruiter" },
-  { name: "Aegis", gameId: "WOS-00221", power: "986M", role: "War Marshal" },
-  { name: "Valcryo", gameId: "WOS-00763", power: "872M", role: "Member" },
-];
+"use client";
+
+import { useEffect, useState } from "react";
+import { formatPowerCompact } from "@/lib/power";
+import { hasSupabaseEnv, supabase } from "@/lib/supabase-client";
+
+type PlayerItem = {
+  id: string;
+  name: string;
+  game_id: string;
+  power: number;
+  role: string;
+};
 
 export default function PlayersPage() {
+  const isSupabaseReady = hasSupabaseEnv && Boolean(supabase);
+  const [players, setPlayers] = useState<PlayerItem[]>([]);
+  const [loading, setLoading] = useState(isSupabaseReady);
+  const [message, setMessage] = useState(
+    isSupabaseReady ? "" : "Supabase belum dikonfigurasi.",
+  );
+
+  useEffect(() => {
+    if (!isSupabaseReady || !supabase) return;
+    const supabaseClient = supabase;
+
+    const timer = setTimeout(async () => {
+      const { data, error } = await supabaseClient
+        .from("players")
+        .select("id, name, game_id, power, role")
+        .order("power", { ascending: false })
+        .order("updated_at", { ascending: false });
+
+      if (error) {
+        setMessage(`Gagal memuat player: ${error.message}`);
+      } else {
+        setPlayers((data ?? []) as PlayerItem[]);
+      }
+
+      setLoading(false);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [isSupabaseReady]);
+
   return (
     <section className="space-y-4">
       <header className="ice-panel rounded-3xl p-5">
@@ -18,20 +55,36 @@ export default function PlayersPage() {
         </p>
       </header>
 
+      {loading && (
+        <div className="ice-panel rounded-2xl p-4 text-sm text-slate-300">
+          Memuat data player...
+        </div>
+      )}
+
+      {!loading && message && (
+        <div className="ice-panel rounded-2xl p-4 text-sm text-rose-200">{message}</div>
+      )}
+
+      {!loading && !message && players.length === 0 && (
+        <div className="ice-panel rounded-2xl p-4 text-sm text-slate-300">
+          Belum ada player. Tambahkan dari admin master data player.
+        </div>
+      )}
+
       <div className="grid gap-3 md:grid-cols-2">
         {players.map((player) => (
-          <article key={player.gameId} className="ice-panel rounded-2xl p-4">
+          <article key={player.id} className="ice-panel rounded-2xl p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-lg font-semibold text-cyan-100">{player.name}</p>
-                <p className="text-xs text-slate-300">{player.gameId}</p>
+                <p className="text-xs text-slate-300">{player.game_id}</p>
               </div>
               <span className="rounded-xl bg-cyan-400/20 px-3 py-1 text-xs text-cyan-100">
                 {player.role}
               </span>
             </div>
             <p className="mt-4 text-sm text-slate-300">Power</p>
-            <p className="text-2xl font-black">{player.power}</p>
+            <p className="text-2xl font-black">{formatPowerCompact(player.power)}</p>
           </article>
         ))}
       </div>
