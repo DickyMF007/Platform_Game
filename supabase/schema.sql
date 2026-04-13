@@ -6,6 +6,9 @@ create table if not exists public.states (
   name text not null,
   status text not null default 'active',
   description text,
+  commander_in_charge text,
+  reset_event text,
+  state_age text,
   cover_image_url text,
   updated_at timestamptz not null default now()
 );
@@ -81,6 +84,9 @@ create table if not exists public.quick_stats (
 -- Patch existing tables safely (if tables already exist)
 alter table public.states add column if not exists status text default 'active';
 alter table public.states add column if not exists description text;
+alter table public.states add column if not exists commander_in_charge text;
+alter table public.states add column if not exists reset_event text;
+alter table public.states add column if not exists state_age text;
 alter table public.states add column if not exists cover_image_url text;
 alter table public.states add column if not exists updated_at timestamptz default now();
 
@@ -209,6 +215,12 @@ with check (
 drop policy if exists "Temporary frontend admin manage updates" on public.state_updates;
 create policy "Temporary frontend admin manage updates"
 on public.state_updates for all
+using (true)
+with check (true);
+
+drop policy if exists "Temporary frontend admin manage states" on public.states;
+create policy "Temporary frontend admin manage states"
+on public.states for all
 using (true)
 with check (true);
 

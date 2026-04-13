@@ -10,6 +10,8 @@ import {
 import { hasSupabaseEnv, supabase } from "@/lib/supabase-client";
 
 type AdminSummary = {
+  stateCount: number;
+  stateTimelineCount: number;
   latestUpdateCount: number;
   quickStatsCount: number;
   registrationCount: number;
@@ -21,6 +23,8 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [summary, setSummary] = useState<AdminSummary>({
+    stateCount: 0,
+    stateTimelineCount: 0,
     latestUpdateCount: 0,
     quickStatsCount: 0,
     registrationCount: 0,
@@ -42,11 +46,22 @@ export default function AdminPage() {
     const supabaseClient = supabase;
 
     const timer = setTimeout(async () => {
-      const [{ count: latestUpdateCount }, { count: quickStatsCount }, { count: registrationCount }] =
+      const [
+        { count: stateCount },
+        { count: stateTimelineCount },
+        { count: latestUpdateCount },
+        { count: quickStatsCount },
+        { count: registrationCount },
+      ] =
         await Promise.all([
+          supabaseClient.from("states").select("*", { count: "exact", head: true }),
           supabaseClient
             .from("state_updates")
             .select("*", { count: "exact", head: true }),
+          supabaseClient
+            .from("state_updates")
+            .select("*", { count: "exact", head: true })
+            .eq("is_published", true),
           supabaseClient
             .from("quick_stats")
             .select("*", { count: "exact", head: true }),
@@ -56,6 +71,8 @@ export default function AdminPage() {
         ]);
 
       setSummary({
+        stateCount: stateCount ?? 0,
+        stateTimelineCount: stateTimelineCount ?? 0,
         latestUpdateCount: latestUpdateCount ?? 0,
         quickStatsCount: quickStatsCount ?? 0,
         registrationCount: registrationCount ?? 0,
@@ -157,7 +174,17 @@ export default function AdminPage() {
         </button>
       </header>
 
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-4">
+        <Link
+          href="/admin/state"
+          className="ice-panel rounded-2xl p-4 transition hover:border-cyan-200/60"
+        >
+          <p className="text-xs text-slate-300">MASTER DATA</p>
+          <p className="mt-2 text-lg font-semibold text-cyan-100">State</p>
+          <p className="mt-1 text-sm text-slate-300">
+            Kelola detail state dan timeline update.
+          </p>
+        </Link>
         <Link
           href="/admin/latest-update"
           className="ice-panel rounded-2xl p-4 transition hover:border-cyan-200/60"
@@ -194,6 +221,14 @@ export default function AdminPage() {
             </tr>
           </thead>
           <tbody>
+            <tr className="border-t border-slate-700/60">
+              <td className="px-3 py-2">State Detail</td>
+              <td className="px-3 py-2">{summary.stateCount}</td>
+            </tr>
+            <tr className="border-t border-slate-700/60">
+              <td className="px-3 py-2">State Timeline</td>
+              <td className="px-3 py-2">{summary.stateTimelineCount}</td>
+            </tr>
             <tr className="border-t border-slate-700/60">
               <td className="px-3 py-2">Latest Update</td>
               <td className="px-3 py-2">{summary.latestUpdateCount}</td>
