@@ -47,7 +47,7 @@ export default function AdminLatestUpdatePage() {
       .order("created_at", { ascending: false });
 
     if (error) {
-      setMessage(`Gagal load data: ${error.message}`);
+      setMessage(`Failed to load data: ${error.message}`);
       return;
     }
 
@@ -82,12 +82,12 @@ export default function AdminLatestUpdatePage() {
     const parsedCreatedAt = createdAtInput ? new Date(createdAtInput) : null;
 
     if (!title || !content) {
-      setMessage("Title dan content wajib diisi.");
+      setMessage("Title and content are required.");
       return;
     }
 
     if (parsedCreatedAt && Number.isNaN(parsedCreatedAt.getTime())) {
-      setMessage("Format timestamp tidak valid.");
+      setMessage("Invalid timestamp format.");
       return;
     }
 
@@ -114,11 +114,11 @@ export default function AdminLatestUpdatePage() {
     setLoading(false);
 
     if (error) {
-      setMessage(`Gagal simpan update: ${error.message}`);
+      setMessage(`Failed to save update: ${error.message}`);
       return;
     }
 
-    setMessage("Update berhasil ditambahkan.");
+    setMessage("Update added successfully.");
     formEl.reset();
     void loadUpdates();
   }
@@ -131,7 +131,7 @@ export default function AdminLatestUpdatePage() {
       .eq("id", row.id);
 
     if (error) {
-      setMessage(`Gagal update status publish: ${error.message}`);
+      setMessage(`Failed to update publish status: ${error.message}`);
       return;
     }
 
@@ -143,7 +143,7 @@ export default function AdminLatestUpdatePage() {
 
     const { error } = await supabase.from("state_updates").delete().eq("id", id);
     if (error) {
-      setMessage(`Gagal hapus data: ${error.message}`);
+      setMessage(`Failed to delete data: ${error.message}`);
       return;
     }
 
@@ -197,12 +197,12 @@ export default function AdminLatestUpdatePage() {
 
       {!hasSupabaseEnv && (
         <article className="ice-panel rounded-2xl p-4 text-sm text-amber-200">
-          Supabase env belum diatur.
+          Supabase env is not configured.
         </article>
       )}
 
       <form onSubmit={handleCreate} className="ice-panel space-y-4 rounded-3xl p-5">
-        <h2 className="text-lg font-semibold text-cyan-100">Tambah Update Baru</h2>
+        <h2 className="text-lg font-semibold text-cyan-100">Add New Update</h2>
         <label className="block text-sm">
           Title
           <input
@@ -245,7 +245,7 @@ export default function AdminLatestUpdatePage() {
           />
         </label>
         {/* <label className="block text-sm">
-          Image URL (opsional)
+          Image URL (optional)
           <input
             name="imageUrl"
             className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
@@ -253,14 +253,14 @@ export default function AdminLatestUpdatePage() {
         </label> */}
         <label className="flex items-center gap-2 text-sm">
           <input type="checkbox" name="isPublished" defaultChecked />
-          Publish sekarang
+            Publish now
         </label>
         <button
           type="submit"
           disabled={loading}
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950 disabled:opacity-60"
         >
-          {loading ? "Menyimpan..." : "Simpan Update"}
+          {loading ? "Saving..." : "Save Update"}
         </button>
         {message && <p className="text-sm text-cyan-100">{message}</p>}
       </form>
@@ -273,7 +273,7 @@ export default function AdminLatestUpdatePage() {
               <th className="px-3 py-2">Content</th>
               <th className="px-3 py-2">Timestamp</th>
               <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Aksi</th>
+              <th className="px-3 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -282,7 +282,7 @@ export default function AdminLatestUpdatePage() {
                 <td className="px-3 py-2">{row.title}</td>
                 <td className="px-3 py-2">{row.content}</td>
                 <td className="px-3 py-2">
-                  {new Date(row.created_at).toLocaleString("id-ID")}
+                  {new Date(row.created_at).toLocaleString("en-US")}
                 </td>
                 <td className="px-3 py-2">
                   {row.is_published ? "Published" : "Draft"}
@@ -310,7 +310,7 @@ export default function AdminLatestUpdatePage() {
                     onClick={() => handleDelete(row.id)}
                     className="rounded-lg border border-rose-300/50 px-2 py-1 text-xs text-rose-300"
                   >
-                    Hapus
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -318,7 +318,7 @@ export default function AdminLatestUpdatePage() {
             {rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-3 py-4 text-center text-slate-300">
-                  Belum ada data update.
+                  No updates yet.
                 </td>
               </tr>
             )}

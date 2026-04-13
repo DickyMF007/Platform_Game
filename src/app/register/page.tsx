@@ -7,10 +7,10 @@ export default function RegisterPage() {
         <p className="text-xs tracking-[0.16em] text-cyan-200/80">
           RECRUITMENT FORM
         </p>
-        <h1 className="mt-2 text-2xl font-bold">Pendaftaran Masuk State</h1>
+        <h1 className="mt-2 text-2xl font-bold">State Entry Registration</h1>
         <p className="mt-2 text-sm text-slate-200">
-          Isi data berikut untuk proses seleksi oleh tim recruiter. Upload foto
-          power yang jelas agar review lebih cepat.
+          Fill in the form below for recruiter screening. Upload a clear power
+          screenshot so the review process is faster.
         </p>
       </header>
 

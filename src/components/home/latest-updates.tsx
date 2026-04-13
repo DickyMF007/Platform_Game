@@ -18,7 +18,7 @@ export function LatestUpdates() {
   useEffect(() => {
     async function loadUpdates() {
       if (!supabase || !hasSupabaseEnv) {
-        setErrorMessage("Supabase belum dikonfigurasi.");
+        setErrorMessage("Supabase is not configured.");
         setIsLoading(false);
         return;
       }
@@ -56,11 +56,11 @@ export function LatestUpdates() {
       {isLoading && <p className="mt-4 text-sm text-slate-300">Loading update...</p>}
 
       {!isLoading && errorMessage && (
-        <p className="mt-4 text-sm text-rose-300">Gagal memuat data: {errorMessage}</p>
+        <p className="mt-4 text-sm text-rose-300">Failed to load data: {errorMessage}</p>
       )}
 
       {!isLoading && !errorMessage && updates.length === 0 && (
-        <p className="mt-4 text-sm text-slate-300">Belum ada update terbaru.</p>
+        <p className="mt-4 text-sm text-slate-300">No recent updates yet.</p>
       )}
 
       {!isLoading && !errorMessage && updates.length > 0 && (
@@ -70,7 +70,7 @@ export function LatestUpdates() {
               <div className="flex items-center justify-between gap-3">
                 <h3 className="font-semibold">{item.title}</h3>
                 <span className="text-xs text-slate-300">
-                  {new Date(item.created_at).toLocaleDateString("id-ID")}
+                  {new Date(item.created_at).toLocaleDateString("en-US")}
                 </span>
               </div>
               <p className="mt-2 text-sm text-slate-200">{item.content}</p>

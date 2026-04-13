@@ -17,7 +17,7 @@ export default function PlayersPage() {
   const [players, setPlayers] = useState<PlayerItem[]>([]);
   const [loading, setLoading] = useState(isSupabaseReady);
   const [message, setMessage] = useState(
-    isSupabaseReady ? "" : "Supabase belum dikonfigurasi.",
+    isSupabaseReady ? "" : "Supabase is not configured.",
   );
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function PlayersPage() {
         .order("updated_at", { ascending: false });
 
       if (error) {
-        setMessage(`Gagal memuat player: ${error.message}`);
+        setMessage(`Failed to load players: ${error.message}`);
       } else {
         setPlayers((data ?? []) as PlayerItem[]);
       }
@@ -49,15 +49,15 @@ export default function PlayersPage() {
         <p className="text-xs tracking-[0.16em] text-cyan-200/80">
           PLAYER INFORMATION
         </p>
-        <h1 className="mt-2 text-2xl font-bold">Roster Utama</h1>
+        <h1 className="mt-2 text-2xl font-bold">Main Roster</h1>
         <p className="mt-2 text-sm text-slate-200">
-          Data ringkas player untuk pemantauan kontribusi dan kekuatan aliansi.
+          Compact player data for tracking contribution and alliance strength.
         </p>
       </header>
 
       {loading && (
         <div className="ice-panel rounded-2xl p-4 text-sm text-slate-300">
-          Memuat data player...
+          Loading player data...
         </div>
       )}
 
@@ -67,7 +67,7 @@ export default function PlayersPage() {
 
       {!loading && !message && players.length === 0 && (
         <div className="ice-panel rounded-2xl p-4 text-sm text-slate-300">
-          Belum ada player. Tambahkan dari admin master data player.
+          No players yet. Add them from Admin Player Master Data.
         </div>
       )}
 

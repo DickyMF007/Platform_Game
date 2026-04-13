@@ -45,7 +45,7 @@ export default function AdminQuickStatsPage() {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      setMessage(`Gagal load data: ${error.message}`);
+      setMessage(`Failed to load data: ${error.message}`);
       return;
     }
 
@@ -73,7 +73,7 @@ export default function AdminQuickStatsPage() {
     const isActive = formData.get("isActive") === "on";
 
     if (!label || !value) {
-      setMessage("Label dan Value wajib diisi.");
+      setMessage("Label and Value are required.");
       return;
     }
 
@@ -88,12 +88,12 @@ export default function AdminQuickStatsPage() {
     setLoading(false);
 
     if (error) {
-      setMessage(`Gagal simpan quick stats: ${error.message}`);
+      setMessage(`Failed to save quick stats: ${error.message}`);
       return;
     }
 
     formEl.reset();
-    setMessage("Quick stats berhasil ditambahkan.");
+    setMessage("Quick stats added successfully.");
     void loadQuickStats();
   }
 
@@ -105,7 +105,7 @@ export default function AdminQuickStatsPage() {
       .eq("id", row.id);
 
     if (error) {
-      setMessage(`Gagal update status: ${error.message}`);
+      setMessage(`Failed to update status: ${error.message}`);
       return;
     }
 
@@ -117,7 +117,7 @@ export default function AdminQuickStatsPage() {
 
     const { error } = await supabase.from("quick_stats").delete().eq("id", id);
     if (error) {
-      setMessage(`Gagal hapus data: ${error.message}`);
+      setMessage(`Failed to delete data: ${error.message}`);
       return;
     }
 
@@ -166,7 +166,7 @@ export default function AdminQuickStatsPage() {
       </header>
 
       <form onSubmit={handleCreate} className="ice-panel space-y-4 rounded-3xl p-5">
-        <h2 className="text-lg font-semibold text-cyan-100">Tambah Quick Stats</h2>
+        <h2 className="text-lg font-semibold text-cyan-100">Add Quick Stats</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
             Label
@@ -212,7 +212,7 @@ export default function AdminQuickStatsPage() {
           disabled={loading}
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950 disabled:opacity-60"
         >
-          {loading ? "Menyimpan..." : "Simpan Quick Stats"}
+          {loading ? "Saving..." : "Save Quick Stats"}
         </button>
         {message && <p className="text-sm text-cyan-100">{message}</p>}
       </form>
@@ -226,7 +226,7 @@ export default function AdminQuickStatsPage() {
               <th className="px-3 py-2">Note</th>
               <th className="px-3 py-2">Order</th>
               <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Aksi</th>
+              <th className="px-3 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -250,7 +250,7 @@ export default function AdminQuickStatsPage() {
                     onClick={() => handleDelete(row.id)}
                     className="rounded-lg border border-rose-300/50 px-2 py-1 text-xs text-rose-300"
                   >
-                    Hapus
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -258,7 +258,7 @@ export default function AdminQuickStatsPage() {
             {rows.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-3 py-4 text-center text-slate-300">
-                  Belum ada data quick stats.
+                  No quick stats data yet.
                 </td>
               </tr>
             )}

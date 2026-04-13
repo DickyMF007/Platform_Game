@@ -23,7 +23,7 @@ export default function LeaderboardPage() {
   const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(isSupabaseReady);
   const [message, setMessage] = useState(
-    isSupabaseReady ? "" : "Supabase belum dikonfigurasi.",
+    isSupabaseReady ? "" : "Supabase is not configured.",
   );
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function LeaderboardPage() {
         .order("updated_at", { ascending: false });
 
       if (error) {
-        setMessage(`Gagal memuat leaderboard: ${error.message}`);
+        setMessage(`Failed to load leaderboard: ${error.message}`);
       } else {
         setRows((data ?? []) as LeaderboardRow[]);
       }
@@ -64,13 +64,13 @@ export default function LeaderboardPage() {
         <p className="text-xs tracking-[0.16em] text-cyan-200/80">LEADERBOARD</p>
         <h1 className="mt-2 text-2xl font-bold">Top Power - Weekly Snapshot</h1>
         <p className="mt-2 text-sm text-slate-200">
-          Pemeringkatan performa player untuk monitoring progres kekuatan aliansi.
+          Player performance ranking to track alliance power progress.
         </p>
       </header>
 
       {loading && (
         <div className="ice-panel rounded-2xl p-4 text-sm text-slate-300">
-          Memuat leaderboard...
+          Loading leaderboard...
         </div>
       )}
 
@@ -80,7 +80,7 @@ export default function LeaderboardPage() {
 
       {!loading && !message && leaderboard.length === 0 && (
         <div className="ice-panel rounded-2xl p-4 text-sm text-slate-300">
-          Belum ada player untuk diranking.
+          No players available for ranking.
         </div>
       )}
 

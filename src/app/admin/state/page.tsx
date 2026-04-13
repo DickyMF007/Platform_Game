@@ -61,12 +61,12 @@ export default function AdminStatePage() {
     ]);
 
     if (stateResult.error) {
-      setMessage(`Gagal load state detail: ${stateResult.error.message}`);
+      setMessage(`Failed to load state details: ${stateResult.error.message}`);
       return;
     }
 
     if (timelineResult.error) {
-      setMessage(`Gagal load timeline: ${timelineResult.error.message}`);
+      setMessage(`Failed to load timeline: ${timelineResult.error.message}`);
       return;
     }
 
@@ -98,7 +98,7 @@ export default function AdminStatePage() {
     };
 
     if (!payload.name) {
-      setMessage("Nama state wajib diisi.");
+      setMessage("State name is required.");
       return;
     }
 
@@ -108,11 +108,11 @@ export default function AdminStatePage() {
 
     const { error } = await query;
     if (error) {
-      setMessage(`Gagal simpan state detail: ${error.message}`);
+      setMessage(`Failed to save state details: ${error.message}`);
       return;
     }
 
-    setMessage("State detail berhasil disimpan.");
+    setMessage("State details saved successfully.");
     void loadData();
   }
 
@@ -129,12 +129,12 @@ export default function AdminStatePage() {
     const parsedCreatedAt = createdAtInput ? new Date(createdAtInput) : null;
 
     if (!title || !content) {
-      setMessage("Title dan content timeline wajib diisi.");
+      setMessage("Timeline title and content are required.");
       return;
     }
 
     if (parsedCreatedAt && Number.isNaN(parsedCreatedAt.getTime())) {
-      setMessage("Format timestamp timeline tidak valid.");
+      setMessage("Invalid timeline timestamp format.");
       return;
     }
 
@@ -155,11 +155,11 @@ export default function AdminStatePage() {
 
     const { error } = await supabase.from("state_updates").insert(payload);
     if (error) {
-      setMessage(`Gagal simpan timeline: ${error.message}`);
+      setMessage(`Failed to save timeline: ${error.message}`);
       return;
     }
 
-    setMessage("Timeline update berhasil ditambahkan.");
+    setMessage("Timeline update added successfully.");
     formEl.reset();
     void loadData();
   }
@@ -173,7 +173,7 @@ export default function AdminStatePage() {
       .eq("id", row.id);
 
     if (error) {
-      setMessage(`Gagal update publish timeline: ${error.message}`);
+      setMessage(`Failed to update timeline publish status: ${error.message}`);
       return;
     }
 
@@ -185,7 +185,7 @@ export default function AdminStatePage() {
     const { error } = await supabase.from("state_updates").delete().eq("id", id);
 
     if (error) {
-      setMessage(`Gagal hapus timeline: ${error.message}`);
+      setMessage(`Failed to delete timeline: ${error.message}`);
       return;
     }
 
@@ -245,7 +245,7 @@ export default function AdminStatePage() {
       >
         <h2 className="text-lg font-semibold text-cyan-100">State Detail</h2>
         <label className="block text-sm">
-          Nama State
+          State Name
           <input
             name="name"
             defaultValue={stateDetail?.name ?? ""}
@@ -280,7 +280,7 @@ export default function AdminStatePage() {
             />
           </label>
           <label className="block text-sm">
-            Umur State
+            State Age
             <input
               name="stateAge"
               defaultValue={stateDetail?.state_age ?? ""}
@@ -292,7 +292,7 @@ export default function AdminStatePage() {
           type="submit"
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950"
         >
-          Simpan State Detail
+          Save State Details
         </button>
       </form>
 
@@ -329,14 +329,14 @@ export default function AdminStatePage() {
           </label>
           <label className="mt-7 flex items-center gap-2 text-sm">
             <input type="checkbox" name="isPublished" defaultChecked />
-            Publish sekarang
+            Publish now
           </label>
         </div>
         <button
           type="submit"
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950"
         >
-          Simpan Timeline
+          Save Timeline
         </button>
       </form>
 
@@ -347,7 +347,7 @@ export default function AdminStatePage() {
               <th className="px-3 py-2">Title</th>
               <th className="px-3 py-2">Timestamp</th>
               <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Aksi</th>
+              <th className="px-3 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -355,7 +355,7 @@ export default function AdminStatePage() {
               <tr key={row.id} className="border-t border-slate-700/60">
                 <td className="px-3 py-2">{row.title}</td>
                 <td className="px-3 py-2">
-                  {new Date(row.created_at).toLocaleString("id-ID")}
+                  {new Date(row.created_at).toLocaleString("en-US")}
                 </td>
                 <td className="px-3 py-2">
                   {row.is_published ? "Published" : "Draft"}
@@ -373,7 +373,7 @@ export default function AdminStatePage() {
                     onClick={() => deleteTimeline(row.id)}
                     className="rounded-lg border border-rose-300/50 px-2 py-1 text-xs text-rose-300"
                   >
-                    Hapus
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -381,7 +381,7 @@ export default function AdminStatePage() {
             {timelineRows.length === 0 && (
               <tr>
                 <td colSpan={4} className="px-3 py-4 text-center text-slate-300">
-                  Belum ada timeline update.
+                  No timeline updates yet.
                 </td>
               </tr>
             )}

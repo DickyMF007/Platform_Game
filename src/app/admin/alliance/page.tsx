@@ -61,12 +61,12 @@ export default function AdminAlliancePage() {
     ]);
 
     if (allianceResult.error) {
-      setMessage(`Gagal load alliance: ${allianceResult.error.message}`);
+      setMessage(`Failed to load alliance: ${allianceResult.error.message}`);
       return;
     }
 
     if (eventsResult.error) {
-      setMessage(`Gagal load alliance events: ${eventsResult.error.message}`);
+      setMessage(`Failed to load alliance events: ${eventsResult.error.message}`);
       return;
     }
 
@@ -96,7 +96,7 @@ export default function AdminAlliancePage() {
     };
 
     if (!payload.name || !payload.tag) {
-      setMessage("Nama dan singkatan alliance wajib diisi.");
+      setMessage("Alliance name and tag are required.");
       return;
     }
 
@@ -106,11 +106,11 @@ export default function AdminAlliancePage() {
 
     const { error } = await query;
     if (error) {
-      setMessage(`Gagal simpan alliance: ${error.message}`);
+      setMessage(`Failed to save alliance: ${error.message}`);
       return;
     }
 
-    setMessage("Alliance master data berhasil disimpan.");
+    setMessage("Alliance master data saved successfully.");
     void loadAlliance();
   }
 
@@ -127,12 +127,12 @@ export default function AdminAlliancePage() {
     const isPublished = formData.get("isPublished") !== null;
 
     if (!title) {
-      setMessage("Title event wajib diisi.");
+      setMessage("Event title is required.");
       return;
     }
 
     if (!/^\d{2}:\d{2}$/.test(eventTime)) {
-      setMessage("Format waktu harus HH:mm.");
+      setMessage("Time format must be HH:mm.");
       return;
     }
 
@@ -153,11 +153,11 @@ export default function AdminAlliancePage() {
 
     const { error } = await supabase.from("alliance_events").insert(payload);
     if (error) {
-      setMessage(`Gagal simpan event: ${error.message}`);
+      setMessage(`Failed to save event: ${error.message}`);
       return;
     }
 
-    setMessage("Event alliance berhasil ditambahkan.");
+    setMessage("Alliance event added successfully.");
     formEl.reset();
     void loadAlliance();
   }
@@ -170,7 +170,7 @@ export default function AdminAlliancePage() {
       .eq("id", row.id);
 
     if (error) {
-      setMessage(`Gagal update publish event: ${error.message}`);
+      setMessage(`Failed to update event publish status: ${error.message}`);
       return;
     }
 
@@ -181,7 +181,7 @@ export default function AdminAlliancePage() {
     if (!supabase || !hasSupabaseEnv) return;
     const { error } = await supabase.from("alliance_events").delete().eq("id", id);
     if (error) {
-      setMessage(`Gagal hapus event: ${error.message}`);
+      setMessage(`Failed to delete event: ${error.message}`);
       return;
     }
 
@@ -239,7 +239,7 @@ export default function AdminAlliancePage() {
         <h2 className="text-lg font-semibold text-cyan-100">Alliance Detail</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
-            Nama
+            Name
             <input
               name="name"
               defaultValue={alliance?.name ?? ""}
@@ -248,7 +248,7 @@ export default function AdminAlliancePage() {
             />
           </label>
           <label className="block text-sm">
-            Singkatan
+            Tag
             <input
               name="tag"
               defaultValue={alliance?.tag ?? ""}
@@ -275,7 +275,7 @@ export default function AdminAlliancePage() {
           />
         </label>
         <label className="block text-sm">
-          Banner URL (untuk hero Home)
+          Banner URL (for Home hero)
           <input
             name="bannerUrl"
             defaultValue={alliance?.banner_url ?? ""}
@@ -286,7 +286,7 @@ export default function AdminAlliancePage() {
           type="submit"
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950"
         >
-          Simpan Alliance
+          Save Alliance
         </button>
       </form>
 
@@ -312,7 +312,7 @@ export default function AdminAlliancePage() {
         </label>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
-            Waktu (HH:mm)
+            Time (HH:mm)
             <input
               name="eventTime"
               type="time"
@@ -323,14 +323,14 @@ export default function AdminAlliancePage() {
     
           <label className="mt-7 flex items-center gap-2 text-sm">
             <input type="checkbox" name="isPublished" defaultChecked />
-            Publish sekarang
+            Publish now
           </label>
         </div>
         <button
           type="submit"
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950"
         >
-          Simpan Event
+          Save Event
         </button>
       </form>
 
@@ -340,9 +340,9 @@ export default function AdminAlliancePage() {
             <tr className="text-cyan-100">
               <th className="px-3 py-2">Title</th>
               <th className="px-3 py-2">Subtitle</th>
-              <th className="px-3 py-2">Waktu</th>
+              <th className="px-3 py-2">Time</th>
               <th className="px-3 py-2">Status</th>
-              <th className="px-3 py-2">Aksi</th>
+              <th className="px-3 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -367,7 +367,7 @@ export default function AdminAlliancePage() {
                     onClick={() => handleDeleteEvent(eventItem.id)}
                     className="rounded-lg border border-rose-300/50 px-2 py-1 text-xs text-rose-300"
                   >
-                    Hapus
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -375,7 +375,7 @@ export default function AdminAlliancePage() {
             {events.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-3 py-4 text-center text-slate-300">
-                  Belum ada event alliance.
+                  No alliance events yet.
                 </td>
               </tr>
             )}

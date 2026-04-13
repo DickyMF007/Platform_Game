@@ -103,7 +103,7 @@ export default function AdminPage() {
     const password = String(formData.get("password") ?? "");
 
     if (!isValidAdminCredential(username, password)) {
-      setErrorMessage("Username atau password salah.");
+      setErrorMessage("Incorrect username or password.");
       return;
     }
 
@@ -135,7 +135,7 @@ export default function AdminPage() {
           <p className="text-xs tracking-[0.16em] text-cyan-200/80">ADMIN ACCESS</p>
           <h1 className="mt-2 text-2xl font-bold">Admin Login</h1>
           <p className="mt-2 text-sm text-slate-200">
-            Masuk dengan akun admin untuk membuka halaman khusus pengelolaan data.
+            Sign in with an admin account to access data management pages.
           </p>
         </header>
 
@@ -165,7 +165,7 @@ export default function AdminPage() {
             type="submit"
             className="frost-button w-full rounded-xl px-4 py-3 font-semibold text-slate-950"
           >
-            Masuk Admin
+            Sign In
           </button>
         </form>
       </section>
@@ -196,7 +196,7 @@ export default function AdminPage() {
           <p className="text-xs text-slate-300">MASTER DATA</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">Alliance</p>
           <p className="mt-1 text-sm text-slate-300">
-            Kelola nama, singkatan, slogan alliance.
+            Manage alliance name, tag, and slogan.
           </p>
         </Link>
         <Link
@@ -206,7 +206,7 @@ export default function AdminPage() {
           <p className="text-xs text-slate-300">MASTER DATA</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">State</p>
           <p className="mt-1 text-sm text-slate-300">
-            Kelola detail state dan timeline update.
+            Manage state details and update timeline.
           </p>
         </Link>
         <Link
@@ -215,7 +215,7 @@ export default function AdminPage() {
         >
           <p className="text-xs text-slate-300">MASTER DATA</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">Latest Update</p>
-          <p className="mt-1 text-sm text-slate-300">Kelola berita dan publish status.</p>
+          <p className="mt-1 text-sm text-slate-300">Manage updates and publish status.</p>
         </Link>
         <Link
           href="/admin/quick-stats"
@@ -223,7 +223,7 @@ export default function AdminPage() {
         >
           <p className="text-xs text-slate-300">MASTER DATA</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">Quick Stats</p>
-          <p className="mt-1 text-sm text-slate-300">Kelola statistik ringkas halaman Home.</p>
+          <p className="mt-1 text-sm text-slate-300">Manage Home page quick stats.</p>
         </Link>
         <Link
           href="/admin/players"
@@ -232,7 +232,7 @@ export default function AdminPage() {
           <p className="text-xs text-slate-300">MASTER DATA</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">Player</p>
           <p className="mt-1 text-sm text-slate-300">
-            Daftarkan player dan power dalam M/B.
+            Register players and power in M/B.
           </p>
         </Link>
         <Link
@@ -241,7 +241,7 @@ export default function AdminPage() {
         >
           <p className="text-xs text-slate-300">MASTER DATA</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">Registrations</p>
-          <p className="mt-1 text-sm text-slate-300">Pantau daftar pendaftar state.</p>
+          <p className="mt-1 text-sm text-slate-300">Monitor state registration applicants.</p>
         </Link>
       </div>
 
@@ -251,7 +251,7 @@ export default function AdminPage() {
           <thead>
             <tr className="text-cyan-100">
               <th className="px-3 py-2">Master Data</th>
-              <th className="px-3 py-2">Jumlah Data</th>
+              <th className="px-3 py-2">Total Rows</th>
             </tr>
           </thead>
           <tbody>

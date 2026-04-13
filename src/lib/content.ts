@@ -1,48 +1,48 @@
 export const allianceCarouselSlides = [
   {
     title: "Power Rankings",
-    subtitle: "Peringkat kekuatan chief [EVE].",
+    subtitle: "Power rankings for [EVE] chiefs.",
     image: "/images/Power_Rangkings.jpeg",
   },
   {
     title: "Bear Trap",
-    subtitle: "Koordinasi serangan Bear Trap alliance.",
+    subtitle: "Alliance coordination for Bear Trap attacks.",
     image: "/images/Bear_Trap.jpeg",
   },
   {
     title: "Alliance Rankings",
-    subtitle: "Posisi [EVE] di ranking alliance state.",
+    subtitle: "[EVE] position in state alliance rankings.",
     image: "/images/Alliance_Rangkings.jpeg",
   },
   {
     title: "Alliance Members",
-    subtitle: "Roster anggota alliance [EVE].",
+    subtitle: "Member roster of alliance [EVE].",
     image: "/images/Alliance_Members.jpeg",
   },
 ];
 
 export const quickStats = [
-  { label: "Total Member", value: "128", note: "+7 minggu ini" },
-  { label: "Alliance Power", value: "34.8B", note: "Top [EVE] di state" },
-  { label: "Pendaftar Baru", value: "24", note: "status pending" },
+  { label: "Total Members", value: "128", note: "+7 this week" },
+  { label: "Alliance Power", value: "34.8B", note: "Top [EVE] in the state" },
+  { label: "New Applicants", value: "24", note: "pending status" },
   { label: "State Rank", value: "#1", note: "State 3302" },
 ];
 
 export const stateUpdates = [
   {
-    title: "Alliance Showdown Dimulai",
+    title: "Alliance Showdown Begins",
     date: "13 Apr 2026",
-    content: "Fokus rally jam 19:00 WIB. Prioritas target: pusat kontrol barat.",
+    content: "Rally focus at 19:00 WIB. Priority target: western control center.",
   },
   {
-    title: "Recruitment Gelombang 3 Dibuka",
+    title: "Recruitment Wave 3 Opened",
     date: "11 Apr 2026",
-    content: "Minimum power 180M, aktif event harian, dan ikut call [EVE].",
+    content: "Minimum power 180M, active in daily events, and joins [EVE] calls.",
   },
   {
-    title: "Perubahan Strategi Fortress",
+    title: "Fortress Strategy Update",
     date: "09 Apr 2026",
-    content: "Lineup tank dipindah ke lane tengah untuk menahan burst awal.",
+    content: "Tank lineup moved to mid lane to absorb early burst.",
   },
 ];
 

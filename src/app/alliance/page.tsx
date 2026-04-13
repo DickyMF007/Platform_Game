@@ -28,7 +28,7 @@ export default function AlliancePage() {
   useEffect(() => {
     async function loadAlliance() {
       if (!supabase || !hasSupabaseEnv) {
-        setErrorMessage("Supabase belum dikonfigurasi.");
+        setErrorMessage("Supabase is not configured.");
         setLoading(false);
         return;
       }
@@ -75,11 +75,11 @@ export default function AlliancePage() {
           ALLIANCE INFORMATION
         </p>
         <h1 className="mt-2 text-2xl font-bold">
-          {alliance ? `[${alliance.tag}] ${alliance.name}` : "Alliance belum diatur"}
+          {alliance ? `[${alliance.tag}] ${alliance.name}` : "Alliance is not configured yet"}
         </h1>
         <p className="mt-2 text-sm text-slate-200">
           {alliance?.description ??
-            "Detail alliance belum tersedia. Silakan atur di master data admin."}
+            "Alliance details are not available yet. Configure them in admin master data."}
         </p>
       </header>
 
@@ -91,19 +91,19 @@ export default function AlliancePage() {
 
       {!loading && errorMessage && (
         <article className="ice-panel rounded-2xl p-4 text-sm text-rose-300">
-          Gagal memuat data alliance: {errorMessage}
+          Failed to load alliance data: {errorMessage}
         </article>
       )}
 
       <div className="grid gap-3 sm:grid-cols-3">
         <article className="ice-panel rounded-2xl p-4">
-          <p className="text-xs text-slate-300">Nama</p>
+          <p className="text-xs text-slate-300">Name</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">
             {alliance?.name ?? "-"}
           </p>
         </article>
         <article className="ice-panel rounded-2xl p-4">
-          <p className="text-xs text-slate-300">Singkatan</p>
+          <p className="text-xs text-slate-300">Tag</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">
             {alliance?.tag ?? "-"}
           </p>
@@ -123,7 +123,7 @@ export default function AlliancePage() {
             <article key={event.id} className="rounded-2xl bg-slate-900/45 p-4">
               <p className="text-xs text-cyan-200">
                 {event.event_time ||
-                  new Date(event.event_timestamp).toLocaleTimeString("id-ID", {
+                  new Date(event.event_timestamp).toLocaleTimeString("en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })}
@@ -134,7 +134,7 @@ export default function AlliancePage() {
           ))}
           {!loading && !errorMessage && events.length === 0 && (
             <article className="rounded-2xl bg-slate-900/45 p-4 text-sm text-slate-300">
-              Belum ada daftar event alliance.
+              No alliance events yet.
             </article>
           )}
         </div>

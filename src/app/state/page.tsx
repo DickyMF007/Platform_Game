@@ -28,7 +28,7 @@ export default function StatePage() {
   useEffect(() => {
     async function loadStateData() {
       if (!supabase || !hasSupabaseEnv) {
-        setErrorMessage("Supabase belum dikonfigurasi.");
+        setErrorMessage("Supabase is not configured.");
         setLoading(false);
         return;
       }
@@ -77,11 +77,11 @@ export default function StatePage() {
           STATE INFORMATION
         </p>
         <h1 className="mt-2 text-2xl font-bold">
-          {stateDetail?.name ?? "State belum diatur"}
+          {stateDetail?.name ?? "State is not configured yet"}
         </h1>
         <p className="mt-2 text-sm text-slate-200">
           {stateDetail?.description ??
-            "Deskripsi state belum tersedia. Silakan atur dari admin section."}
+            "State description is not available yet. Configure it in the admin section."}
         </p>
       </header>
 
@@ -93,7 +93,7 @@ export default function StatePage() {
 
       {!loading && errorMessage && (
         <article className="ice-panel rounded-2xl p-4 text-sm text-rose-300">
-          Gagal memuat data state: {errorMessage}
+          Failed to load state data: {errorMessage}
         </article>
       )}
 
@@ -111,7 +111,7 @@ export default function StatePage() {
           </p>
         </article>
         <article className="ice-panel rounded-2xl p-4">
-          <p className="text-xs text-slate-300">Umur State</p>
+          <p className="text-xs text-slate-300">State Age</p>
           <p className="mt-2 text-lg font-semibold text-cyan-100">
             {stateDetail?.state_age ?? "-"}
           </p>
@@ -124,7 +124,7 @@ export default function StatePage() {
           {timeline.map((item) => (
             <article key={item.id} className="rounded-2xl bg-slate-900/45 p-4">
               <p className="text-xs text-cyan-200">
-                {new Date(item.created_at).toLocaleDateString("id-ID")}
+                {new Date(item.created_at).toLocaleDateString("en-US")}
               </p>
               <h3 className="mt-1 font-semibold">{item.title}</h3>
               <p className="mt-2 text-sm text-slate-200">{item.content}</p>
@@ -132,7 +132,7 @@ export default function StatePage() {
           ))}
           {!loading && !errorMessage && timeline.length === 0 && (
             <article className="rounded-2xl bg-slate-900/45 p-4 text-sm text-slate-300">
-              Belum ada timeline update.
+              No timeline updates yet.
             </article>
           )}
         </div>

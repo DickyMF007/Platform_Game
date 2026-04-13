@@ -18,7 +18,7 @@ export function QuickStats() {
   useEffect(() => {
     async function loadStats() {
       if (!supabase || !hasSupabaseEnv) {
-        setErrorMessage("Supabase belum dikonfigurasi.");
+        setErrorMessage("Supabase is not configured.");
         setLoading(false);
         return;
       }
@@ -61,7 +61,7 @@ export function QuickStats() {
   if (errorMessage) {
     return (
       <article className="ice-panel rounded-2xl p-4 text-sm text-rose-300">
-        Gagal memuat quick stats: {errorMessage}
+        Failed to load quick stats: {errorMessage}
       </article>
     );
   }
@@ -69,7 +69,7 @@ export function QuickStats() {
   if (stats.length === 0) {
     return (
       <article className="ice-panel rounded-2xl p-4 text-sm text-slate-300">
-        Quick stats belum tersedia.
+        Quick stats are not available yet.
       </article>
     );
   }

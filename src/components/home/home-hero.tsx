@@ -94,13 +94,13 @@ export function HomeHero() {
           href="/register"
           className="frost-button rounded-xl px-4 py-3 text-sm font-semibold text-slate-950"
         >
-          Daftar Masuk State
+          Register for State Entry
         </Link>
         <Link
           href="/leaderboard"
           className="rounded-xl border border-cyan-300/50 px-4 py-3 text-sm font-semibold text-cyan-100"
         >
-          Lihat Leaderboard
+          View Leaderboard
         </Link>
       </div>
     </div>

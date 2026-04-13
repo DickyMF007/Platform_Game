@@ -45,7 +45,7 @@ export default function AdminPlayersPage() {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      setMessage(`Gagal load data player: ${error.message}`);
+      setMessage(`Failed to load player data: ${error.message}`);
       return;
     }
 
@@ -73,12 +73,12 @@ export default function AdminPlayersPage() {
     const unit = String(formData.get("powerUnit") ?? "million") as PowerUnit;
 
     if (!name || !gameId) {
-      setMessage("Nama dan Game ID wajib diisi.");
+      setMessage("Name and Game ID are required.");
       return;
     }
 
     if (!Number.isFinite(amount) || amount < 0) {
-      setMessage("Power amount tidak valid.");
+      setMessage("Invalid power amount.");
       return;
     }
 
@@ -95,12 +95,12 @@ export default function AdminPlayersPage() {
     setLoading(false);
 
     if (error) {
-      setMessage(`Gagal simpan player: ${error.message}`);
+      setMessage(`Failed to save player: ${error.message}`);
       return;
     }
 
     formEl.reset();
-    setMessage("Player berhasil ditambahkan.");
+    setMessage("Player added successfully.");
     void loadPlayers();
   }
 
@@ -109,7 +109,7 @@ export default function AdminPlayersPage() {
 
     const { error } = await supabase.from("players").delete().eq("id", id);
     if (error) {
-      setMessage(`Gagal hapus player: ${error.message}`);
+      setMessage(`Failed to delete player: ${error.message}`);
       return;
     }
 
@@ -158,10 +158,10 @@ export default function AdminPlayersPage() {
       </header>
 
       <form onSubmit={handleCreate} className="ice-panel space-y-4 rounded-3xl p-5">
-        <h2 className="text-lg font-semibold text-cyan-100">Tambah Player</h2>
+        <h2 className="text-lg font-semibold text-cyan-100">Add Player</h2>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
-            Nama
+            Name
             <input
               name="name"
               required
@@ -218,7 +218,7 @@ export default function AdminPlayersPage() {
           disabled={loading}
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950 disabled:opacity-60"
         >
-          {loading ? "Menyimpan..." : "Simpan Player"}
+          {loading ? "Saving..." : "Save Player"}
         </button>
         {message && <p className="text-sm text-cyan-100">{message}</p>}
       </form>
@@ -227,11 +227,11 @@ export default function AdminPlayersPage() {
         <table className="min-w-full text-left text-sm">
           <thead>
             <tr className="text-cyan-100">
-              <th className="px-3 py-2">Nama</th>
+              <th className="px-3 py-2">Name</th>
               <th className="px-3 py-2">Game ID</th>
               <th className="px-3 py-2">Role</th>
               <th className="px-3 py-2">Power</th>
-              <th className="px-3 py-2">Aksi</th>
+              <th className="px-3 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -247,7 +247,7 @@ export default function AdminPlayersPage() {
                     onClick={() => handleDelete(row.id)}
                     className="rounded-lg border border-rose-300/50 px-2 py-1 text-xs text-rose-300"
                   >
-                    Hapus
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -255,7 +255,7 @@ export default function AdminPlayersPage() {
             {rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-3 py-4 text-center text-slate-300">
-                  Belum ada data player.
+                  No player data yet.
                 </td>
               </tr>
             )}

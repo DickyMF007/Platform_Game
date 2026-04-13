@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "",
   description:
-    "Platform informasi state, aliansi, player, leaderboard, dan pendaftaran Whiteout Survival.",
+    "Whiteout Survival platform for state, alliance, player, leaderboard, and registration information.",
 };
 
 export default function RootLayout({

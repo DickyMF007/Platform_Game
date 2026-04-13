@@ -11,7 +11,7 @@ const links = [
   { href: "/alliance", label: "Alliance" },
   { href: "/players", label: "Player" },
   { href: "/leaderboard", label: "Rank" },
-  { href: "/register", label: "Daftar" },
+  { href: "/register", label: "Register" },
   { href: "/admin", label: "Admin" },
 ];
 

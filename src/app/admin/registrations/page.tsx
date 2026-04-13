@@ -86,9 +86,9 @@ export default function AdminRegistrationsPage() {
           <p className="text-xs tracking-[0.16em] text-cyan-200/80">
             ADMIN RECRUITER
           </p>
-          <h1 className="mt-2 text-2xl font-bold">List Pendaftar</h1>
+          <h1 className="mt-2 text-2xl font-bold">Registration List</h1>
           <p className="mt-2 text-sm text-slate-200">
-            Pantau data pendaftar dan lihat foto power secara detail.
+            Review applicant data and inspect power screenshots in detail.
           </p>
         </div>
         <Link
@@ -101,14 +101,13 @@ export default function AdminRegistrationsPage() {
 
       {!hasSupabaseEnv && (
         <article className="ice-panel rounded-2xl p-4 text-sm text-amber-200">
-          NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY belum
-          diatur.
+          NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY are not configured.
         </article>
       )}
 
       {errorMessage && (
         <article className="ice-panel rounded-2xl p-4 text-sm text-rose-300">
-          Gagal mengambil data: {errorMessage}
+          Failed to fetch data: {errorMessage}
         </article>
       )}
 
@@ -116,11 +115,11 @@ export default function AdminRegistrationsPage() {
         <table className="min-w-full text-left text-sm">
           <thead className="text-cyan-100">
             <tr>
-              <th className="px-3 py-2">Nama</th>
+              <th className="px-3 py-2">Name</th>
               <th className="px-3 py-2">Game ID</th>
               <th className="px-3 py-2">Status</th>
               <th className="px-3 py-2">Note</th>
-              <th className="px-3 py-2">Foto Power</th>
+              <th className="px-3 py-2">Power Screenshot</th>
             </tr>
           </thead>
           <tbody>
@@ -142,7 +141,7 @@ export default function AdminRegistrationsPage() {
                       }
                       className="rounded-lg border border-cyan-300/40 px-2 py-1 text-xs text-cyan-200"
                     >
-                      Lihat Foto
+                      View Image
                     </button>
                   ) : (
                     <span className="text-xs text-slate-400">-</span>
@@ -153,7 +152,7 @@ export default function AdminRegistrationsPage() {
             {rows.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-3 py-4 text-center text-slate-300">
-                  Belum ada data pendaftar.
+                  No registration data yet.
                 </td>
               </tr>
             )}
@@ -166,28 +165,27 @@ export default function AdminRegistrationsPage() {
           <div className="ice-panel w-full max-w-3xl rounded-3xl p-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold text-cyan-100">
-                Bukti Power - {selectedPhoto.name}
+                Power Proof - {selectedPhoto.name}
               </h2>
               <button
                 type="button"
                 onClick={() => setSelectedPhoto(null)}
                 className="rounded-lg border border-cyan-300/40 px-3 py-1 text-xs text-cyan-200"
               >
-                Tutup
+                Close
               </button>
             </div>
 
             {selectedPhoto.imageUrl ? (
               <img
                 src={selectedPhoto.imageUrl}
-                alt={`Bukti power ${selectedPhoto.name}`}
+                alt={`Power proof ${selectedPhoto.name}`}
                 className="max-h-[75vh] w-full rounded-2xl border border-cyan-300/20 object-contain"
               />
             ) : (
               <p className="text-sm text-rose-300">
-                Gagal memuat gambar. Pastikan bucket `{
-                  registrationProofBucket
-                }` bersifat public atau memiliki policy read.
+                Failed to load image. Make sure the `{registrationProofBucket}` bucket
+                is public or has a read policy.
               </p>
             )}
           </div>
