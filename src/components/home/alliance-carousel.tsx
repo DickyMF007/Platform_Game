@@ -89,7 +89,13 @@ export function AllianceCarousel({ slides }: AllianceCarouselProps) {
         onTouchEnd={(e) => {
           if (touchStartX === null) return;
           const delta = (e.changedTouches[0]?.clientX ?? touchStartX) - touchStartX;
-          if (Math.abs(delta) > 50) delta < 0 ? goNext() : goPrev();
+          if (Math.abs(delta) > 50) {
+            if (delta < 0) {
+              goNext();
+            } else {
+              goPrev();
+            }
+          }
           setTouchStartX(null);
         }}
       >
@@ -164,13 +170,13 @@ export function AllianceCarousel({ slides }: AllianceCarouselProps) {
         {/* Tactical Nav Buttons */}
         <button 
           onClick={goPrev} 
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-50 w-12 h-12 border border-cyan-500/30 bg-black/70 text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all flex items-center justify-center font-bold text-xl backdrop-blur-sm"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-0 w-12 h-12 border border-cyan-500/30 bg-black/70 text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all flex items-center justify-center font-bold text-xl backdrop-blur-sm"
         >
           {"<"}
         </button>
         <button 
           onClick={goNext} 
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-50 w-12 h-12 border border-cyan-500/30 bg-black/70 text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all flex items-center justify-center font-bold text-xl backdrop-blur-sm"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-0 w-12 h-12 border border-cyan-500/30 bg-black/70 text-cyan-500 hover:bg-cyan-500 hover:text-black transition-all flex items-center justify-center font-bold text-xl backdrop-blur-sm"
         >
           {">"}
         </button>

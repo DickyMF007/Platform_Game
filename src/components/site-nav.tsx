@@ -10,6 +10,7 @@ const links = [
   { href: "/players", label: "Player" },
   { href: "/leaderboard", label: "Rank" },
   { href: "/register", label: "Daftar" },
+  { href: "/admin", label: "Admin" },
 ];
 
 function navClass(active: boolean) {
@@ -46,7 +47,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed inset-x-4 bottom-4 z-30 rounded-2xl border border-cyan-200/25 bg-[#0b1730] px-2 py-2 shadow-[0_14px_32px_rgba(0,0,0,0.5)] md:hidden">
-      <ul className="grid grid-cols-6 gap-1 text-center text-xs">
+      <ul className="grid grid-cols-7 gap-1 text-center text-xs">
         {links.map((item) => (
           <li key={item.href}>
             <Link

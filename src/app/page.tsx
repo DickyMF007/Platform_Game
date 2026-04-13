@@ -1,10 +1,7 @@
 import { AllianceCarousel } from "@/components/home/alliance-carousel";
-import {
-  allianceCarouselSlides,
-  allianceProfile,
-  quickStats,
-  stateUpdates,
-} from "@/lib/content";
+import { LatestUpdates } from "@/components/home/latest-updates";
+import { QuickStats } from "@/components/home/quick-stats";
+import { allianceCarouselSlides, allianceProfile } from "@/lib/content";
 import Link from "next/link";
 
 export default function Home() {
@@ -40,7 +37,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/70 to-cyan-950/55" />
         {/* DAFTAR - Bawah */}
-        <div className="relative z-20 flex flex-wrap items-center gap-3 mt-auto">
+        <div className="relative z-0 flex flex-wrap items-center gap-3 mt-auto">
           <Link
             href="/register"
             className="frost-button rounded-xl px-4 py-3 text-sm font-semibold text-slate-950"
@@ -56,15 +53,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {quickStats.map((stat) => (
-          <article key={stat.label} className="ice-panel rounded-2xl p-4">
-            <p className="text-xs text-slate-300">{stat.label}</p>
-            <p className="mt-2 text-2xl font-bold text-cyan-100">{stat.value}</p>
-            <p className="mt-1 text-xs text-slate-300">{stat.note}</p>
-          </article>
-        ))}
-      </div>
+      <QuickStats />
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -76,21 +65,7 @@ export default function Home() {
         <AllianceCarousel slides={allianceCarouselSlides} />
       </div>
  
-
-      <div className="ice-panel rounded-3xl p-5">
-        <h2 className="text-lg font-semibold text-cyan-100">Latest State Updates</h2>
-        <div className="mt-4 space-y-3">
-          {stateUpdates.map((item) => (
-            <article key={item.title} className="rounded-2xl bg-slate-900/45 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="font-semibold">{item.title}</h3>
-                <span className="text-xs text-slate-300">{item.date}</span>
-              </div>
-              <p className="mt-2 text-sm text-slate-200">{item.content}</p>
-            </article>
-          ))}
-        </div>
-      </div>
+      <LatestUpdates />
     </section>
   );
 }

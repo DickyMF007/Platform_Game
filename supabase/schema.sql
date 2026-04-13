@@ -1,3 +1,5 @@
+create extension if not exists pgcrypto;
+
 -- Core tables
 create table if not exists public.states (
   id uuid primary key default gen_random_uuid(),
@@ -66,6 +68,55 @@ create table if not exists public.profiles (
   role text not null default 'public'
 );
 
+create table if not exists public.quick_stats (
+  id uuid primary key default gen_random_uuid(),
+  label text not null,
+  value text not null,
+  note text,
+  sort_order integer not null default 0,
+  is_active boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+-- Patch existing tables safely (if tables already exist)
+alter table public.states add column if not exists status text default 'active';
+alter table public.states add column if not exists description text;
+alter table public.states add column if not exists cover_image_url text;
+alter table public.states add column if not exists updated_at timestamptz default now();
+
+alter table public.state_updates add column if not exists state_id uuid;
+alter table public.state_updates add column if not exists image_url text;
+alter table public.state_updates add column if not exists is_published boolean default true;
+alter table public.state_updates add column if not exists created_at timestamptz default now();
+
+alter table public.alliances add column if not exists description text;
+alter table public.alliances add column if not exists requirements text;
+alter table public.alliances add column if not exists timezone text;
+alter table public.alliances add column if not exists banner_url text;
+
+alter table public.players add column if not exists alliance_id uuid;
+alter table public.players add column if not exists power bigint default 0;
+alter table public.players add column if not exists role text default 'member';
+alter table public.players add column if not exists note text;
+alter table public.players add column if not exists updated_at timestamptz default now();
+
+alter table public.leaderboards add column if not exists snapshot_date date default current_date;
+
+alter table public.registrations add column if not exists note text;
+alter table public.registrations add column if not exists status text default 'pending';
+alter table public.registrations add column if not exists created_at timestamptz default now();
+alter table public.registrations add column if not exists reviewed_by uuid;
+
+alter table public.profiles add column if not exists display_name text;
+alter table public.profiles add column if not exists role text default 'public';
+
+alter table public.quick_stats add column if not exists label text;
+alter table public.quick_stats add column if not exists value text;
+alter table public.quick_stats add column if not exists note text;
+alter table public.quick_stats add column if not exists sort_order integer default 0;
+alter table public.quick_stats add column if not exists is_active boolean default true;
+alter table public.quick_stats add column if not exists updated_at timestamptz default now();
+
 -- Enable RLS
 alter table public.states enable row level security;
 alter table public.state_updates enable row level security;
@@ -74,6 +125,7 @@ alter table public.players enable row level security;
 alter table public.leaderboards enable row level security;
 alter table public.registrations enable row level security;
 alter table public.profiles enable row level security;
+alter table public.quick_stats enable row level security;
 
 -- Helper function for role checks
 create or replace function public.has_role(required_role text)
@@ -89,38 +141,50 @@ as $$
   );
 $$;
 
--- Public read policies
+-- Recreate policies safely (idempotent)
+drop policy if exists "Public read states" on public.states;
 create policy "Public read states"
 on public.states for select
 using (true);
 
+drop policy if exists "Public read published updates" on public.state_updates;
 create policy "Public read published updates"
 on public.state_updates for select
 using (is_published = true);
 
+drop policy if exists "Public read alliances" on public.alliances;
 create policy "Public read alliances"
 on public.alliances for select
 using (true);
 
+drop policy if exists "Public read players" on public.players;
 create policy "Public read players"
 on public.players for select
 using (true);
 
+drop policy if exists "Public read leaderboards" on public.leaderboards;
 create policy "Public read leaderboards"
 on public.leaderboards for select
 using (true);
 
--- Registration policies
+drop policy if exists "Public read quick stats" on public.quick_stats;
+create policy "Public read quick stats"
+on public.quick_stats for select
+using (is_active = true);
+
+drop policy if exists "Public insert registrations" on public.registrations;
 create policy "Public insert registrations"
 on public.registrations for insert
 with check (status = 'pending');
 
+drop policy if exists "Admin and recruiter read registrations" on public.registrations;
 create policy "Admin and recruiter read registrations"
 on public.registrations for select
 using (
   public.has_role('admin') or public.has_role('recruiter')
 );
 
+drop policy if exists "Admin and recruiter update registrations" on public.registrations;
 create policy "Admin and recruiter update registrations"
 on public.registrations for update
 using (
@@ -130,7 +194,7 @@ with check (
   public.has_role('admin') or public.has_role('recruiter')
 );
 
--- Admin content management
+drop policy if exists "Admin and recruiter manage updates" on public.state_updates;
 create policy "Admin and recruiter manage updates"
 on public.state_updates for all
 using (
@@ -140,6 +204,21 @@ with check (
   public.has_role('admin') or public.has_role('recruiter')
 );
 
+-- Temporary policy for hardcoded frontend admin login (no Supabase Auth yet).
+-- WARNING: this opens write access to anon/authenticated users.
+drop policy if exists "Temporary frontend admin manage updates" on public.state_updates;
+create policy "Temporary frontend admin manage updates"
+on public.state_updates for all
+using (true)
+with check (true);
+
+drop policy if exists "Temporary frontend admin manage quick stats" on public.quick_stats;
+create policy "Temporary frontend admin manage quick stats"
+on public.quick_stats for all
+using (true)
+with check (true);
+
+drop policy if exists "Admin and recruiter manage players" on public.players;
 create policy "Admin and recruiter manage players"
 on public.players for all
 using (
