@@ -274,6 +274,12 @@ on public.players for all
 using (true)
 with check (true);
 
+drop policy if exists "Temporary frontend admin manage registrations" on public.registrations;
+create policy "Temporary frontend admin manage registrations"
+on public.registrations for all
+using (true)
+with check (true);
+
 drop policy if exists "Admin and recruiter manage players" on public.players;
 create policy "Admin and recruiter manage players"
 on public.players for all
@@ -283,3 +289,18 @@ using (
 with check (
   public.has_role('admin') or public.has_role('recruiter')
 );
+
+-- Storage bucket for registration proof images
+insert into storage.buckets (id, name, public)
+values ('registration-proof', 'registration-proof', true)
+on conflict (id) do nothing;
+
+drop policy if exists "Public read registration proofs" on storage.objects;
+create policy "Public read registration proofs"
+on storage.objects for select
+using (bucket_id = 'registration-proof');
+
+drop policy if exists "Public upload registration proofs" on storage.objects;
+create policy "Public upload registration proofs"
+on storage.objects for insert
+with check (bucket_id = 'registration-proof');

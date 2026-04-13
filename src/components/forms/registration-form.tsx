@@ -1,18 +1,29 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { hasSupabaseEnv, supabase } from "@/lib/supabase-client";
+import { registrationProofBucket } from "@/lib/storage";
 
 type SubmitState = "idle" | "loading" | "success" | "error";
 
 export function RegistrationForm() {
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [message, setMessage] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("");
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setSubmitState("loading");
     setMessage("");
+    const formEl = event.currentTarget;
 
     if (!supabase || !hasSupabaseEnv) {
       setSubmitState("error");
@@ -22,7 +33,7 @@ export function RegistrationForm() {
       return;
     }
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(formEl);
     const name = String(formData.get("name") || "").trim();
     const gameId = String(formData.get("gameId") || "").trim();
     const note = String(formData.get("note") || "").trim();
@@ -38,12 +49,18 @@ export function RegistrationForm() {
     const filePath = `registration/${safeFileName}`;
 
     const uploadResult = await supabase.storage
-      .from("registration-proof")
+      .from(registrationProofBucket)
       .upload(filePath, powerImage, { upsert: false });
 
     if (uploadResult.error) {
       setSubmitState("error");
-      setMessage(`Gagal upload gambar: ${uploadResult.error.message}`);
+      if (uploadResult.error.message.toLowerCase().includes("bucket not found")) {
+        setMessage(
+          `Bucket storage "${registrationProofBucket}" tidak ditemukan. Buat bucket tersebut di Supabase Storage atau set env NEXT_PUBLIC_REGISTRATION_PROOF_BUCKET sesuai nama bucket yang sudah ada.`
+        );
+      } else {
+        setMessage(`Gagal upload gambar: ${uploadResult.error.message}`);
+      }
       return;
     }
 
@@ -61,7 +78,11 @@ export function RegistrationForm() {
       return;
     }
 
-    event.currentTarget.reset();
+    formEl.reset();
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl("");
+    }
     setSubmitState("success");
     setMessage("Pendaftaran berhasil dikirim. Tim recruiter akan review data kamu.");
   }
@@ -106,9 +127,36 @@ export function RegistrationForm() {
             type="file"
             accept="image/*"
             required
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (!file) {
+                if (previewUrl) {
+                  URL.revokeObjectURL(previewUrl);
+                }
+                setPreviewUrl("");
+                return;
+              }
+
+              const nextPreviewUrl = URL.createObjectURL(file);
+              if (previewUrl) {
+                URL.revokeObjectURL(previewUrl);
+              }
+              setPreviewUrl(nextPreviewUrl);
+            }}
             className="mt-1 w-full rounded-xl border border-dashed border-cyan-300/30 bg-slate-950/70 px-3 py-2"
           />
         </label>
+
+        {previewUrl && (
+          <div className="rounded-2xl border border-cyan-300/25 bg-slate-900/40 p-3">
+            <p className="mb-2 text-xs text-cyan-200/80">Preview Foto Power</p>
+            <img
+              src={previewUrl}
+              alt="Preview foto power"
+              className="max-h-72 w-full rounded-xl object-contain"
+            />
+          </div>
+        )}
       </div>
 
       <button
