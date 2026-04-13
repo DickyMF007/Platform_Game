@@ -1,4 +1,10 @@
-import { allianceProfile, quickStats, stateUpdates } from "@/lib/content";
+import { AllianceCarousel } from "@/components/home/alliance-carousel";
+import {
+  allianceCarouselSlides,
+  allianceProfile,
+  quickStats,
+  stateUpdates,
+} from "@/lib/content";
 import Link from "next/link";
 
 export default function Home() {
@@ -50,9 +56,6 @@ export default function Home() {
         </div>
       </div>
 
-
-
-
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {quickStats.map((stat) => (
           <article key={stat.label} className="ice-panel rounded-2xl p-4">
@@ -62,6 +65,17 @@ export default function Home() {
           </article>
         ))}
       </div>
+
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-cyan-100">Alliance Gallery</h2>
+          <p className="text-xs tracking-[0.12em] text-slate-300">
+            MOBILE CAROUSEL
+          </p>
+        </div>
+        <AllianceCarousel slides={allianceCarouselSlides} />
+      </div>
+ 
 
       <div className="ice-panel rounded-3xl p-5">
         <h2 className="text-lg font-semibold text-cyan-100">Latest State Updates</h2>

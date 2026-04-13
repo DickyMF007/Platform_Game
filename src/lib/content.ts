@@ -5,6 +5,29 @@ export const allianceProfile = {
   heroImage: "/images/hero_wos.png",
 };
 
+export const allianceCarouselSlides = [
+  {
+    title: "Power Rankings",
+    subtitle: "Peringkat kekuatan chief [EVE].",
+    image: "/images/Power_Rangkings.jpeg",
+  },
+  {
+    title: "Bear Trap",
+    subtitle: "Koordinasi serangan Bear Trap alliance.",
+    image: "/images/Bear_Trap.jpeg",
+  },
+  {
+    title: "Alliance Rankings",
+    subtitle: "Posisi [EVE] di ranking alliance state.",
+    image: "/images/Alliance_Rangkings.jpeg",
+  },
+  {
+    title: "Alliance Members",
+    subtitle: "Roster anggota alliance [EVE].",
+    image: "/images/Alliance_Members.jpeg",
+  },
+];
+
 export const quickStats = [
   { label: "Total Member", value: "128", note: "+7 minggu ini" },
   { label: "Alliance Power", value: "34.8B", note: "Top [EVE] di state" },
