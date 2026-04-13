@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Eve Alliance Hub",
+  title: "",
   description:
     "Platform informasi state, aliansi, player, leaderboard, dan pendaftaran Whiteout Survival.",
 };

@@ -6,29 +6,30 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 
-type StateDetail = {
+type AllianceRow = {
   id: string;
   name: string;
+  tag: string;
+  slogan: string | null;
   description: string | null;
-  commander_in_charge: string | null;
-  reset_event: string | null;
-  state_age: string | null;
+  banner_url: string | null;
 };
 
-type TimelineItem = {
+type AllianceEventRow = {
   id: string;
   title: string;
-  content: string;
+  subtitle: string | null;
+  event_time: string;
+  event_timestamp: string;
   is_published: boolean;
-  created_at: string;
 };
 
-export default function AdminStatePage() {
+export default function AdminAlliancePage() {
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [stateDetail, setStateDetail] = useState<StateDetail | null>(null);
-  const [timelineRows, setTimelineRows] = useState<TimelineItem[]>([]);
+  const [alliance, setAlliance] = useState<AllianceRow | null>(null);
+  const [events, setEvents] = useState<AllianceEventRow[]>([]);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -42,154 +43,149 @@ export default function AdminStatePage() {
     return () => clearTimeout(timer);
   }, [router]);
 
-  async function loadData() {
+  async function loadAlliance() {
     if (!supabase || !hasSupabaseEnv) return;
+    const supabaseClient = supabase;
 
-    const [stateResult, timelineResult] = await Promise.all([
-      supabase
-        .from("states")
-        .select(
-          "id, name, description, commander_in_charge, reset_event, state_age"
-        )
-        .order("updated_at", { ascending: false })
+    const [allianceResult, eventsResult] = await Promise.all([
+      supabaseClient
+        .from("alliances")
+        .select("id, name, tag, slogan, description, banner_url")
+        .order("id", { ascending: false })
         .limit(1)
         .maybeSingle(),
-      supabase
-        .from("state_updates")
-        .select("id, title, content, is_published, created_at")
+      supabaseClient
+        .from("alliance_events")
+        .select("id, title, subtitle, event_time, event_timestamp, is_published")
         .order("created_at", { ascending: false }),
     ]);
 
-    if (stateResult.error) {
-      setMessage(`Gagal load state detail: ${stateResult.error.message}`);
+    if (allianceResult.error) {
+      setMessage(`Gagal load alliance: ${allianceResult.error.message}`);
       return;
     }
 
-    if (timelineResult.error) {
-      setMessage(`Gagal load timeline: ${timelineResult.error.message}`);
+    if (eventsResult.error) {
+      setMessage(`Gagal load alliance events: ${eventsResult.error.message}`);
       return;
     }
 
-    setStateDetail(stateResult.data ?? null);
-    setTimelineRows(timelineResult.data ?? []);
+    setAlliance(allianceResult.data ?? null);
+    setEvents(eventsResult.data ?? []);
   }
 
   useEffect(() => {
     if (!isAuthenticated) return;
     const timer = setTimeout(() => {
-      void loadData();
+      void loadAlliance();
     }, 0);
     return () => clearTimeout(timer);
   }, [isAuthenticated]);
 
-  async function handleSaveStateDetail(event: FormEvent<HTMLFormElement>) {
+  async function handleSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || !hasSupabaseEnv) return;
 
     const formData = new FormData(event.currentTarget);
     const payload = {
       name: String(formData.get("name") ?? "").trim(),
+      tag: String(formData.get("tag") ?? "").trim(),
+      slogan: String(formData.get("slogan") ?? "").trim() || null,
       description: String(formData.get("description") ?? "").trim() || null,
-      commander_in_charge:
-        String(formData.get("commanderInCharge") ?? "").trim() || null,
-      reset_event: String(formData.get("resetEvent") ?? "").trim() || null,
-      state_age: String(formData.get("stateAge") ?? "").trim() || null,
-      updated_at: new Date().toISOString(),
+      banner_url: String(formData.get("bannerUrl") ?? "").trim() || null,
     };
 
-    if (!payload.name) {
-      setMessage("Nama state wajib diisi.");
+    if (!payload.name || !payload.tag) {
+      setMessage("Nama dan singkatan alliance wajib diisi.");
       return;
     }
 
-    const query = stateDetail
-      ? supabase.from("states").update(payload).eq("id", stateDetail.id)
-      : supabase.from("states").insert(payload);
+    const query = alliance
+      ? supabase.from("alliances").update(payload).eq("id", alliance.id)
+      : supabase.from("alliances").insert(payload);
 
     const { error } = await query;
     if (error) {
-      setMessage(`Gagal simpan state detail: ${error.message}`);
+      setMessage(`Gagal simpan alliance: ${error.message}`);
       return;
     }
 
-    setMessage("State detail berhasil disimpan.");
-    void loadData();
+    setMessage("Alliance master data berhasil disimpan.");
+    void loadAlliance();
   }
 
-  async function handleCreateTimeline(event: FormEvent<HTMLFormElement>) {
+  async function handleCreateEvent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!supabase || !hasSupabaseEnv) return;
 
     const formEl = event.currentTarget;
     const formData = new FormData(formEl);
     const title = String(formData.get("title") ?? "").trim();
-    const content = String(formData.get("content") ?? "").trim();
-    const createdAtInput = String(formData.get("createdAt") ?? "").trim();
-    const isPublished = formData.get("isPublished") === "on";
-    const parsedCreatedAt = createdAtInput ? new Date(createdAtInput) : null;
+    const subtitle = String(formData.get("subtitle") ?? "").trim();
+    const eventTime = String(formData.get("eventTime") ?? "").trim();
+    // fix: correct isPublished logic for checkbox (it is checked when the element is present and checked)
+    const isPublished = formData.get("isPublished") !== null;
 
-    if (!title || !content) {
-      setMessage("Title dan content timeline wajib diisi.");
+    if (!title) {
+      setMessage("Title event wajib diisi.");
       return;
     }
 
-    if (parsedCreatedAt && Number.isNaN(parsedCreatedAt.getTime())) {
-      setMessage("Format timestamp timeline tidak valid.");
+    if (!/^\d{2}:\d{2}$/.test(eventTime)) {
+      setMessage("Format waktu harus HH:mm.");
       return;
     }
 
     const payload: {
       title: string;
-      content: string;
+      subtitle: string | null;
+      event_time: string;
       is_published: boolean;
-      state_id?: string;
-      created_at?: string;
+      alliance_id?: string;
     } = {
       title,
-      content,
+      subtitle: subtitle || null,
+      event_time: eventTime,
       is_published: isPublished,
     };
 
-    if (stateDetail?.id) payload.state_id = stateDetail.id;
-    if (parsedCreatedAt) payload.created_at = parsedCreatedAt.toISOString();
+    if (alliance?.id) payload.alliance_id = alliance.id;
 
-    const { error } = await supabase.from("state_updates").insert(payload);
+    const { error } = await supabase.from("alliance_events").insert(payload);
     if (error) {
-      setMessage(`Gagal simpan timeline: ${error.message}`);
+      setMessage(`Gagal simpan event: ${error.message}`);
       return;
     }
 
-    setMessage("Timeline update berhasil ditambahkan.");
+    setMessage("Event alliance berhasil ditambahkan.");
     formEl.reset();
-    void loadData();
+    void loadAlliance();
   }
 
-  async function toggleTimelinePublish(row: TimelineItem) {
+  async function toggleEventPublish(row: AllianceEventRow) {
     if (!supabase || !hasSupabaseEnv) return;
-
     const { error } = await supabase
-      .from("state_updates")
+      .from("alliance_events")
       .update({ is_published: !row.is_published })
       .eq("id", row.id);
 
     if (error) {
-      setMessage(`Gagal update publish timeline: ${error.message}`);
+      setMessage(`Gagal update publish event: ${error.message}`);
       return;
     }
 
-    void loadData();
+    void loadAlliance();
   }
 
-  async function deleteTimeline(id: string) {
+  async function handleDeleteEvent(id: string) {
     if (!supabase || !hasSupabaseEnv) return;
-    const { error } = await supabase.from("state_updates").delete().eq("id", id);
-
+    const { error } = await supabase.from("alliance_events").delete().eq("id", id);
     if (error) {
-      setMessage(`Gagal hapus timeline: ${error.message}`);
+      setMessage(`Gagal hapus event: ${error.message}`);
       return;
     }
 
-    void loadData();
+    void loadAlliance();
   }
 
   function handleLogout() {
@@ -214,7 +210,7 @@ export default function AdminStatePage() {
           <p className="text-xs font-bold tracking-[0.16em] text-cyan-200/80">
             ADMIN SECTION
           </p>
-          <h1 className="mt-2 text-2xl font-bold">Master Data: State</h1>
+          <h1 className="mt-2 text-2xl font-bold">Master Data: Alliance</h1>
         </div>
         <div className="flex items-center gap-2">
           <Link
@@ -239,17 +235,33 @@ export default function AdminStatePage() {
         </article>
       )}
 
-      <form
-        onSubmit={handleSaveStateDetail}
-        className="ice-panel space-y-4 rounded-3xl p-5"
-      >
-        <h2 className="text-lg font-semibold text-cyan-100">State Detail</h2>
+      <form onSubmit={handleSave} className="ice-panel space-y-4 rounded-3xl p-5">
+        <h2 className="text-lg font-semibold text-cyan-100">Alliance Detail</h2>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block text-sm">
+            Nama
+            <input
+              name="name"
+              defaultValue={alliance?.name ?? ""}
+              required
+              className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
+            />
+          </label>
+          <label className="block text-sm">
+            Singkatan
+            <input
+              name="tag"
+              defaultValue={alliance?.tag ?? ""}
+              required
+              className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
+            />
+          </label>
+        </div>
         <label className="block text-sm">
-          Nama State
+          Slogan
           <input
-            name="name"
-            defaultValue={stateDetail?.name ?? ""}
-            required
+            name="slogan"
+            defaultValue={alliance?.slogan ?? ""}
             className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
           />
         </label>
@@ -257,50 +269,32 @@ export default function AdminStatePage() {
           Description
           <textarea
             name="description"
-            defaultValue={stateDetail?.description ?? ""}
             rows={3}
+            defaultValue={alliance?.description ?? ""}
             className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
           />
         </label>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <label className="block text-sm">
-            Commander in Charge
-            <input
-              name="commanderInCharge"
-              defaultValue={stateDetail?.commander_in_charge ?? ""}
-              className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
-            />
-          </label>
-          <label className="block text-sm">
-            Reset Event
-            <input
-              name="resetEvent"
-              defaultValue={stateDetail?.reset_event ?? ""}
-              className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
-            />
-          </label>
-          <label className="block text-sm">
-            Umur State
-            <input
-              name="stateAge"
-              defaultValue={stateDetail?.state_age ?? ""}
-              className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
-            />
-          </label>
-        </div>
+        <label className="block text-sm">
+          Banner URL (untuk hero Home)
+          <input
+            name="bannerUrl"
+            defaultValue={alliance?.banner_url ?? ""}
+            className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
+          />
+        </label>
         <button
           type="submit"
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950"
         >
-          Simpan State Detail
+          Simpan Alliance
         </button>
       </form>
 
       <form
-        onSubmit={handleCreateTimeline}
+        onSubmit={handleCreateEvent}
         className="ice-panel space-y-4 rounded-3xl p-5"
       >
-        <h2 className="text-lg font-semibold text-cyan-100">Timeline Update</h2>
+        <h2 className="text-lg font-semibold text-cyan-100">Alliance Events</h2>
         <label className="block text-sm">
           Title
           <input
@@ -310,23 +304,23 @@ export default function AdminStatePage() {
           />
         </label>
         <label className="block text-sm">
-          Content
-          <textarea
-            name="content"
-            required
-            rows={3}
+          Subtitle
+          <input
+            name="subtitle"
             className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
           />
         </label>
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
-            Timestamp (backdate)
+            Waktu (HH:mm)
             <input
-              name="createdAt"
-              type="datetime-local"
+              name="eventTime"
+              type="time"
+              required
               className="mt-1 w-full rounded-xl border border-cyan-300/30 bg-slate-950/70 px-3 py-2"
             />
           </label>
+    
           <label className="mt-7 flex items-center gap-2 text-sm">
             <input type="checkbox" name="isPublished" defaultChecked />
             Publish sekarang
@@ -336,7 +330,7 @@ export default function AdminStatePage() {
           type="submit"
           className="frost-button rounded-xl px-4 py-3 font-semibold text-slate-950"
         >
-          Simpan Timeline
+          Simpan Event
         </button>
       </form>
 
@@ -345,32 +339,32 @@ export default function AdminStatePage() {
           <thead>
             <tr className="text-cyan-100">
               <th className="px-3 py-2">Title</th>
-              <th className="px-3 py-2">Timestamp</th>
+              <th className="px-3 py-2">Subtitle</th>
+              <th className="px-3 py-2">Waktu</th>
               <th className="px-3 py-2">Status</th>
               <th className="px-3 py-2">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            {timelineRows.map((row) => (
-              <tr key={row.id} className="border-t border-slate-700/60">
-                <td className="px-3 py-2">{row.title}</td>
+            {events.map((eventItem) => (
+              <tr key={eventItem.id} className="border-t border-slate-700/60">
+                <td className="px-3 py-2">{eventItem.title}</td>
+                <td className="px-3 py-2">{eventItem.subtitle ?? "-"}</td>
+                <td className="px-3 py-2">{eventItem.event_time}</td>
                 <td className="px-3 py-2">
-                  {new Date(row.created_at).toLocaleString("id-ID")}
-                </td>
-                <td className="px-3 py-2">
-                  {row.is_published ? "Published" : "Draft"}
+                  {eventItem.is_published ? "Published" : "Draft"}
                 </td>
                 <td className="flex gap-2 px-3 py-2">
                   <button
                     type="button"
-                    onClick={() => toggleTimelinePublish(row)}
+                    onClick={() => toggleEventPublish(eventItem)}
                     className="rounded-lg border border-cyan-300/40 px-2 py-1 text-xs text-cyan-300"
                   >
                     Toggle
                   </button>
                   <button
                     type="button"
-                    onClick={() => deleteTimeline(row.id)}
+                    onClick={() => handleDeleteEvent(eventItem.id)}
                     className="rounded-lg border border-rose-300/50 px-2 py-1 text-xs text-rose-300"
                   >
                     Hapus
@@ -378,10 +372,10 @@ export default function AdminStatePage() {
                 </td>
               </tr>
             ))}
-            {timelineRows.length === 0 && (
+            {events.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-3 py-4 text-center text-slate-300">
-                  Belum ada timeline update.
+                <td colSpan={5} className="px-3 py-4 text-center text-slate-300">
+                  Belum ada event alliance.
                 </td>
               </tr>
             )}

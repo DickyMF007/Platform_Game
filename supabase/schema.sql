@@ -27,6 +27,7 @@ create table if not exists public.alliances (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   tag text not null,
+  slogan text,
   description text,
   requirements text,
   timezone text,
@@ -81,6 +82,17 @@ create table if not exists public.quick_stats (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.alliance_events (
+  id uuid primary key default gen_random_uuid(),
+  alliance_id uuid references public.alliances(id) on delete set null,
+  title text not null,
+  subtitle text,
+  event_time text not null default '00:00',
+  event_timestamp timestamptz not null default now(),
+  is_published boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
 -- Patch existing tables safely (if tables already exist)
 alter table public.states add column if not exists status text default 'active';
 alter table public.states add column if not exists description text;
@@ -96,6 +108,7 @@ alter table public.state_updates add column if not exists is_published boolean d
 alter table public.state_updates add column if not exists created_at timestamptz default now();
 
 alter table public.alliances add column if not exists description text;
+alter table public.alliances add column if not exists slogan text;
 alter table public.alliances add column if not exists requirements text;
 alter table public.alliances add column if not exists timezone text;
 alter table public.alliances add column if not exists banner_url text;
@@ -123,6 +136,13 @@ alter table public.quick_stats add column if not exists sort_order integer defau
 alter table public.quick_stats add column if not exists is_active boolean default true;
 alter table public.quick_stats add column if not exists updated_at timestamptz default now();
 
+alter table public.alliance_events add column if not exists alliance_id uuid;
+alter table public.alliance_events add column if not exists subtitle text;
+alter table public.alliance_events add column if not exists event_time text default '00:00';
+alter table public.alliance_events add column if not exists event_timestamp timestamptz default now();
+alter table public.alliance_events add column if not exists is_published boolean default true;
+alter table public.alliance_events add column if not exists created_at timestamptz default now();
+
 -- Enable RLS
 alter table public.states enable row level security;
 alter table public.state_updates enable row level security;
@@ -132,6 +152,7 @@ alter table public.leaderboards enable row level security;
 alter table public.registrations enable row level security;
 alter table public.profiles enable row level security;
 alter table public.quick_stats enable row level security;
+alter table public.alliance_events enable row level security;
 
 -- Helper function for role checks
 create or replace function public.has_role(required_role text)
@@ -177,6 +198,11 @@ drop policy if exists "Public read quick stats" on public.quick_stats;
 create policy "Public read quick stats"
 on public.quick_stats for select
 using (is_active = true);
+
+drop policy if exists "Public read published alliance events" on public.alliance_events;
+create policy "Public read published alliance events"
+on public.alliance_events for select
+using (is_published = true);
 
 drop policy if exists "Public insert registrations" on public.registrations;
 create policy "Public insert registrations"
@@ -227,6 +253,18 @@ with check (true);
 drop policy if exists "Temporary frontend admin manage quick stats" on public.quick_stats;
 create policy "Temporary frontend admin manage quick stats"
 on public.quick_stats for all
+using (true)
+with check (true);
+
+drop policy if exists "Temporary frontend admin manage alliances" on public.alliances;
+create policy "Temporary frontend admin manage alliances"
+on public.alliances for all
+using (true)
+with check (true);
+
+drop policy if exists "Temporary frontend admin manage alliance events" on public.alliance_events;
+create policy "Temporary frontend admin manage alliance events"
+on public.alliance_events for all
 using (true)
 with check (true);
 

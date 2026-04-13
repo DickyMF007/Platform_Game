@@ -10,6 +10,7 @@ import {
 import { hasSupabaseEnv, supabase } from "@/lib/supabase-client";
 
 type AdminSummary = {
+  allianceCount: number;
   stateCount: number;
   stateTimelineCount: number;
   latestUpdateCount: number;
@@ -23,6 +24,7 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [summary, setSummary] = useState<AdminSummary>({
+    allianceCount: 0,
     stateCount: 0,
     stateTimelineCount: 0,
     latestUpdateCount: 0,
@@ -47,6 +49,7 @@ export default function AdminPage() {
 
     const timer = setTimeout(async () => {
       const [
+        { count: allianceCount },
         { count: stateCount },
         { count: stateTimelineCount },
         { count: latestUpdateCount },
@@ -54,6 +57,9 @@ export default function AdminPage() {
         { count: registrationCount },
       ] =
         await Promise.all([
+          supabaseClient
+            .from("alliances")
+            .select("*", { count: "exact", head: true }),
           supabaseClient.from("states").select("*", { count: "exact", head: true }),
           supabaseClient
             .from("state_updates")
@@ -71,6 +77,7 @@ export default function AdminPage() {
         ]);
 
       setSummary({
+        allianceCount: allianceCount ?? 0,
         stateCount: stateCount ?? 0,
         stateTimelineCount: stateTimelineCount ?? 0,
         latestUpdateCount: latestUpdateCount ?? 0,
@@ -174,7 +181,17 @@ export default function AdminPage() {
         </button>
       </header>
 
-      <div className="grid gap-3 md:grid-cols-4">
+      <div className="grid gap-3 md:grid-cols-5">
+        <Link
+          href="/admin/alliance"
+          className="ice-panel rounded-2xl p-4 transition hover:border-cyan-200/60"
+        >
+          <p className="text-xs text-slate-300">MASTER DATA</p>
+          <p className="mt-2 text-lg font-semibold text-cyan-100">Alliance</p>
+          <p className="mt-1 text-sm text-slate-300">
+            Kelola nama, singkatan, slogan alliance.
+          </p>
+        </Link>
         <Link
           href="/admin/state"
           className="ice-panel rounded-2xl p-4 transition hover:border-cyan-200/60"
@@ -221,6 +238,10 @@ export default function AdminPage() {
             </tr>
           </thead>
           <tbody>
+            <tr className="border-t border-slate-700/60">
+              <td className="px-3 py-2">Alliance</td>
+              <td className="px-3 py-2">{summary.allianceCount}</td>
+            </tr>
             <tr className="border-t border-slate-700/60">
               <td className="px-3 py-2">State Detail</td>
               <td className="px-3 py-2">{summary.stateCount}</td>

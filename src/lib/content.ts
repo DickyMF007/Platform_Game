@@ -1,10 +1,3 @@
-export const allianceProfile = {
-  tag: "[EVE]",
-  name: "Everlasting",
-  state: "3302",
-  heroImage: "/images/hero_wos.png",
-};
-
 export const allianceCarouselSlides = [
   {
     title: "Power Rankings",
